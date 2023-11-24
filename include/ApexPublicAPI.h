@@ -14,6 +14,7 @@ public:
 	void Refresh(bool wait = false);
 	ApexTicker& getTicker(const CurrencyPair& currencyPair);
 	ApexPriceHistory& getPriceHistory(const CurrencyPair& currencyPair, size_t candlesInterval = 5);
+	unsigned long long getServerTime(bool estimate = false);
 
 private:
 

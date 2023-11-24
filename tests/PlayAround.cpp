@@ -1,4 +1,3 @@
-#include <string>
 #include <iostream>
 #include <ApexPublicAPI.h>
 
@@ -11,6 +10,7 @@ int main()
 	btcUsdcHistory.AddOnTickCallback([&](const ApexCandleList& candles) {
 		std::cout << candles[0] << std::endl;
 		std::cout << btcUsdcTicker.getOraclePrice() << std::endl << std::endl;
+		printf("Server Time: %lld\n", api.getServerTime(true));
 		});
 
 	while (true)
