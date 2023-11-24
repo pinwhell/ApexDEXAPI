@@ -1,10 +1,10 @@
 #include <ApexTicker.h>
 
-ApexTicker::ApexTicker(const ApexAPIRequestBuilder& requestBuilder, const CurrencyPair& currencyPair)
+ApexTicker::ApexTicker(const ApexAPIRequestBuilder& requestBuilder, const CurrencyPair& currencyPair, BS::thread_pool_light& threadPool)
 	: mRequestBuilder(requestBuilder)
 	, mCurrencyPair(currencyPair)
 	, mOraclePrice(0.f)
-	, mPollable(true)
+	, mThreadPool(threadPool)
 {}
 
 void ApexTicker::Refresh()
@@ -23,12 +23,10 @@ double ApexTicker::getOraclePrice()
 
 void ApexTicker::PollData()
 {
-	bool bWaitPoll = mPollable.IsInitialPolling();
-
 	if (mPollable.TryHold() == false)
 		return;
 
-	std::thread t([this] {
+	mThreadPool.push_task([this] {
 
 		Pollable::PollerRef ref = mPollable.CreateRef();
 
@@ -51,6 +49,4 @@ void ApexTicker::PollData()
 		catch (...) {}
 
 		});
-
-	mPollable.ManagePollerThread(t);
 }

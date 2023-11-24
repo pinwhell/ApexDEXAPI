@@ -5,7 +5,7 @@ CurrencyPair::CurrencyPair(const std::string& currencyA, const std::string& curr
 	, mCurrencyB(currencyB)
 {}
 
-std::string CurrencyPair::getPair()
+std::string CurrencyPair::getPair() const
 {
 	return mCurrencyA + mCurrencyB;
 }

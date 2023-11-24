@@ -6,4 +6,4 @@ target_link_libraries(CandleTest ApexDEXAPI doctest_with_main)
 
 add_executable(PlayAround PlayAround.cpp)
 
-target_link_libraries(PlayAround ApexDEXAPI httplib)
+target_link_libraries(PlayAround ApexDEXAPI)

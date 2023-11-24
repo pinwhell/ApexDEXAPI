@@ -1,11 +1,11 @@
 #include <ApexPriceHistory.h>
 
-ApexPriceHistory::ApexPriceHistory(const ApexAPIRequestBuilder& requestBuilder, const CurrencyPair& currencyPair, size_t candleInterval)
+ApexPriceHistory::ApexPriceHistory(const ApexAPIRequestBuilder& requestBuilder, const CurrencyPair& currencyPair, size_t candleInterval, BS::thread_pool_light& threadPool)
 	: mCurrencyPair(currencyPair)
 	, mCandleInterval(candleInterval)
 	, mRequestBuilder(requestBuilder)
 	, mCandleList(50)
-	, mPollable(true)
+	, mThreadPool(threadPool)
 {}
 
 void ApexPriceHistory::Refresh()
@@ -32,9 +32,7 @@ void ApexPriceHistory::PollData()
 	if (mPollable.TryHold() == false)
 		return;
 
-	bool waitPool = mPollable.IsInitialPolling();
-
-	std::thread t([this] {
+	mThreadPool.push_task([this] {
 		Pollable::PollerRef ref = mPollable.CreateRef();
 
 		httplib::Result res = mRequestBuilder
@@ -59,6 +57,4 @@ void ApexPriceHistory::PollData()
 		}
 		catch (...) {}
 		});
-
-	mPollable.ManagePollerThread(t);
 }

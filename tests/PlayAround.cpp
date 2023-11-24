@@ -1,24 +1,21 @@
 #include <string>
 #include <iostream>
-#include <ApexPriceHistory.h>
-#include <ApexTicker.h>
+#include <ApexPublicAPI.h>
 
 int main()
 {
-	ApexAPIRequestBuilder builder("https://pro.apex.exchange", "v2");
-	ApexPriceHistory priceHistory(builder, CurrencyPair("BTC", "USDC"), 5);
-	ApexTicker ticker(builder, CurrencyPair("BTC", "USDC"));
+	ApexPublicAPI api("https://pro.apex.exchange", "v1");
+	ApexPriceHistory& btcUsdcHistory = api.getPriceHistory(CurrencyPair("BTC", "USDC"));
+	ApexTicker& btcUsdcTicker = api.getTicker(CurrencyPair("BTC", "USDC"));
 
-	priceHistory.AddOnTickCallback([&](const ApexCandleList& candles) {
+	btcUsdcHistory.AddOnTickCallback([&](const ApexCandleList& candles) {
 		std::cout << candles[0] << std::endl;
-		std::cout << ticker.getOraclePrice() << std::endl << std::endl;
+		std::cout << btcUsdcTicker.getOraclePrice() << std::endl << std::endl;
 		});
 
 	while (true)
 	{
-		ticker.Refresh();
-		priceHistory.Refresh();
-
+		api.Refresh();
 		std::this_thread::sleep_for(std::chrono::milliseconds(500));
 	}
 }
