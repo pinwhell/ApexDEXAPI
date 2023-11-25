@@ -4,7 +4,7 @@ project(ApexDEXAPI)
 
 set(CMAKE_CXX_STANDARD 17)
 
-include_directories(include)
+include_directories(include include/Interfaces)
 
 add_subdirectory(vendor)
 add_subdirectory(src)

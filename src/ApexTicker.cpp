@@ -7,21 +7,19 @@ ApexTicker::ApexTicker(const ApexAPIRequestBuilder& requestBuilder, const Curren
 	, mThreadPool(threadPool)
 {}
 
-void ApexTicker::Refresh()
+void ApexTicker::ProcessData()
 {
-	PollData();
-
 	mQueue.ProcessAll([&](const nlohmann::json& data) {
 		mOraclePrice = std::stod(data["oraclePrice"].get<std::string>());
 		});
 }
 
-double ApexTicker::getOraclePrice()
+double ApexTicker::getOraclePrice() const
 {
 	return mOraclePrice;
 }
 
-void ApexTicker::PollData()
+void ApexTicker::FetchData()
 {
 	if (mPollable.TryHold() == false)
 		return;

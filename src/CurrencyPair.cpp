@@ -5,7 +5,10 @@ CurrencyPair::CurrencyPair(const std::string& currencyA, const std::string& curr
 	, mCurrencyB(currencyB)
 {}
 
-std::string CurrencyPair::getPair() const
+std::string CurrencyPair::getPair(const std::string& separator) const
 {
-	return mCurrencyA + mCurrencyB;
+	if (separator.empty())
+		return mCurrencyA + mCurrencyB;
+
+	return  mCurrencyA + separator + mCurrencyB;;
 }

@@ -8,10 +8,8 @@ ApexPriceHistory::ApexPriceHistory(const ApexAPIRequestBuilder& requestBuilder, 
 	, mThreadPool(threadPool)
 {}
 
-void ApexPriceHistory::Refresh()
+void ApexPriceHistory::ProcessData()
 {
-	PollData();
-
 	mQueue.ProcessAll([this](const nlohmann::json& data) {
 		mCandleList.Update(data);
 		});
@@ -22,12 +20,17 @@ void ApexPriceHistory::AddOnTickCallback(std::function<void(const ApexCandleList
 	mCandleList.AddOnTickCallback(callback);
 }
 
+void ApexPriceHistory::UpdateCheckTick()
+{
+	mCandleList.UpdateCheckTick();
+}
+
 ApexCandleList& ApexPriceHistory::getCandles()
 {
 	return mCandleList;
 }
 
-void ApexPriceHistory::PollData()
+void ApexPriceHistory::FetchData()
 {
 	if (mPollable.TryHold() == false)
 		return;

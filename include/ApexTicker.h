@@ -6,15 +6,19 @@
 #include <nlohmann/json.hpp>
 #include <Pollable.h>
 #include <BS_thread_pool_light.hpp>
+#include <IDataProvider.h>
+#include <IDataProcessor.h>
 
-class ApexTicker {
+class ApexTicker : public IDataProvider, public IDataProcessor {
 public:
 	ApexTicker(const ApexTicker&) = delete;
 	ApexTicker(const ApexTicker&&) = delete;
 	ApexTicker(const ApexAPIRequestBuilder& requestBuilder, const CurrencyPair& currencyPair, BS::thread_pool_light& threadPool);
 
-	void Refresh();
-	double getOraclePrice();
+	void FetchData() override;
+	void ProcessData() override;
+
+	double getOraclePrice() const;
 
 private:
 	void PollData();

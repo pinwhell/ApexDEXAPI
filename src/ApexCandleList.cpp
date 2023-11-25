@@ -1,6 +1,7 @@
 #include <ApexCandleList.h>
 
 ApexCandleList::ApexCandleList(size_t cacheLen)
+	: mPendingReportTick(false)
 {
 	setMaxElements(cacheLen);
 }
@@ -28,7 +29,7 @@ void ApexCandleList::Update(const nlohmann::json& candlesJson)
 		for (int i = 0; i < candlesJson.size(); i++)
 			Add(candlesJson[i]);
 
-		ReportCallbacksTick();
+		mPendingReportTick = true;
 
 		return;
 	}
@@ -53,7 +54,17 @@ void ApexCandleList::Update(const nlohmann::json& candlesJson)
 		Add(*cachedHead);
 
 	if (mCache.front() != cacheUpMostToDate)
-		ReportCallbacksTick();
+		mPendingReportTick = true;
+}
+
+void ApexCandleList::UpdateCheckTick()
+{
+	if (!mPendingReportTick)
+		return;
+
+	ReportCallbacksTick();		
+
+	mPendingReportTick = false;
 }
 
 const Candle& ApexCandleList::operator[](const size_t idx) const
