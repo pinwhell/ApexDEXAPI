@@ -3,12 +3,12 @@
 ApexSymbols::ApexSymbols(const ApexAPIRequestBuilder& requstBuilder, BS::thread_pool_light& threadPool)
 	: mRequestBuilder(requstBuilder)
 	, mThreadPool(threadPool)
-	, mbWantRefresh(true)
+	, mScheduler(std::chrono::minutes(1))
 {}
 
 void ApexSymbols::FetchData()
 {
-	if (mPollable.TryHold() == false)
+	if (!mScheduler || mPollable.TryHold() == false)
 		return;
 
 	mThreadPool.push_task([this] {
@@ -30,7 +30,7 @@ void ApexSymbols::FetchData()
 
 			mPerpetualContractsQueue.Enqueue(resJson["perpetualContract"]);
 			mCurrenciesQueue.Enqueue(resJson["currency"]);
-			mbWantRefresh = false;
+			mScheduler.PostExecuted();
 		}
 		catch (...) {}
 
@@ -69,11 +69,6 @@ const ApexCurrency& ApexSymbols::getCurrency(const std::string& currency)
 	nullCurrency.mStepSize = 0.0;
 
 	return nullCurrency;
-}
-
-void ApexSymbols::setWantRefresh(bool b)
-{
-	mbWantRefresh = b;
 }
 
 inline void ApexSymbols::ProcessCurrenciesDatas()

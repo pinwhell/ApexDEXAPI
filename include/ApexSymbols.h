@@ -8,6 +8,7 @@
 #include <SafeQueue.h>
 #include <nlohmann/json.hpp>
 #include <CurrencyPair.h>
+#include <Scheduler.h>
 
 struct ApexCurrency {
 	double mStepSize;
@@ -27,7 +28,6 @@ public:
 	void ProcessData() override;
 	const ApexPerpeturalContact& getPerpetualContact(const CurrencyPair& currencyPair);
 	const ApexCurrency& getCurrency(const std::string& currency);
-	void setWantRefresh(bool b);
 
 private:
 	void ProcessCurrenciesDatas();
@@ -38,9 +38,9 @@ private:
 	BS::thread_pool_light& mThreadPool;
 	ApexAPIRequestBuilder mRequestBuilder;
 	Pollable mPollable;
+	Scheduler mScheduler;
 	SafeQueue<nlohmann::json> mCurrenciesQueue;
 	SafeQueue<nlohmann::json> mPerpetualContractsQueue;
 	std::unordered_map<std::string, ApexCurrency> mCurrencies;
 	std::unordered_map<std::string, ApexPerpeturalContact> mPerpetualContracts;
-	bool mbWantRefresh; // PlaceHolder => We need Refresh Interval Component
 };
