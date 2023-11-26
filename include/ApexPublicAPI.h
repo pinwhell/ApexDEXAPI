@@ -10,7 +10,7 @@
 
 class ApexPublicAPI {
 public:
-	ApexPublicAPI(const std::string& baseUrl, const std::string& version = "v1");
+	ApexPublicAPI(const std::string& baseUrl = "https://pro.apex.exchange", const std::string& version = "v1");
 
 	void Refresh(bool wait = false);
 	ApexTicker& getTicker(const CurrencyPair& currencyPair);

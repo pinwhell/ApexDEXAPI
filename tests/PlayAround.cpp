@@ -1,25 +1,30 @@
-#include <iostream>
-#include <ApexPublicAPI.h>
-#include <Cache.h>
-#include <IDataProvider.h>
-#include <IDataProcessor.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <ApexRequest.h>
 
 int main()
 {
-	ApexPublicAPI api("https://pro.apex.exchange", "v1");
-	ApexPriceHistory& btcUsdcHistory = api.getPriceHistory(CurrencyPair("BTC", "USDC"));
-	ApexTicker& btcUsdcTicker = api.getTicker(CurrencyPair("BTC", "USDC"));
+	ApexAPICredentials apiCreds = ApexAPICredentials::FromEnviroment();
 
-	btcUsdcHistory.AddOnTickCallback([&](const ApexCandleList& candles) {
-		std::cout << candles[0] << std::endl;
-		std::cout << btcUsdcTicker.getOraclePrice() << std::endl << std::endl;
-		printf("Server Time: %lld\nUSDC Step Size %lf\n", api.getServerTime(true), api.getSymbols().getCurrency("USDC").mStepSize);
-		});
-
-	while (true)
+	if (!apiCreds)
 	{
-		api.Refresh();
-		
-		std::this_thread::sleep_for(std::chrono::milliseconds(500));
+		printf("Authentication Error: Missing environment variables for API authentication.\nPlease verify that the following environment variables are set correctly:\nAPEX_API_KEY, APEX_API_SECRET, APEX_API_PASSPHRASE.\n");
+		return 1;
 	}
+
+	ApexPrivateAPIRequestBuilder requestBuilder(apiCreds);
+
+	httplib::Result res = requestBuilder
+		.setMethod("GET")
+		.setEndpoint("/account-balance")
+		.Build()
+		.Perform();
+
+	if (!res)
+	{
+		printf("Request Failed\n");
+		return 1;
+	}
+
+	std::cout << res->body << std::endl;
 }

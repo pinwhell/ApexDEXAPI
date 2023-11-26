@@ -30,7 +30,7 @@ void ApexTicker::FetchData()
 
 		httplib::Result res = mRequestBuilder
 			.Reset()
-			.setType("GET")
+			.setMethod("GET")
 			.setEndpoint("/ticker")
 			.AddURLParam("symbol", mCurrencyPair.getPair())
 			.Build()

@@ -1,0 +1,2 @@
+add_executable(InvokingPublicAPI InvokingPublicAPI/main.cpp)
+target_link_libraries(InvokingPublicAPI ApexDEXAPI)

@@ -34,7 +34,7 @@ unsigned long long ApexPublicAPI::getServerTime(bool estimate)
 	ApexAPIRequestBuilder reqBuilder = mRequestBuilder;
 
 	httplib::Result res = reqBuilder
-		.setType("GET")
+		.setMethod("GET")
 		.setEndpoint("/time")
 		.Build()
 		.Perform();

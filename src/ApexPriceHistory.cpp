@@ -40,7 +40,7 @@ void ApexPriceHistory::FetchData()
 
 		httplib::Result res = mRequestBuilder
 			.Reset()
-			.setType("GET")
+			.setMethod("GET")
 			.setEndpoint("/klines")
 			.AddURLParam("symbol", mCurrencyPair.getPair())
 			.AddURLParam("interval", std::to_string(mCandleInterval))

@@ -15,7 +15,8 @@ void ApexSymbols::FetchData()
 		Pollable::PollerRef ref = mPollable.CreateRef();
 
 		httplib::Result res = mRequestBuilder
-			.setType("GET")
+			.Reset()
+			.setMethod("GET")
 			.setEndpoint("/symbols")
 			.Build()
 			.Perform();
