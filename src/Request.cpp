@@ -50,7 +50,6 @@ RequestBuilder::RequestBuilder()
 
 RequestBuilder& RequestBuilder::Reset()
 {
-
 	mMethod = "GET";
 	mSchemaDomainPort.clear();
 	mPath = "/";
@@ -59,6 +58,7 @@ RequestBuilder& RequestBuilder::Reset()
 	mOnPreInstantiationCallbacks.clear();
 	mURLEncodedParams.clear();
 	mFullURLEncodedParams.clear();
+	mHeaders.clear();
 	return *this;
 }
 
