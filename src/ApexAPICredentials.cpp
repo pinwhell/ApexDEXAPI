@@ -1,13 +1,17 @@
 #include <ApexAPICredentials.h>
 #include <stdlib.h>
 
+ApexAPICredentials::ApexAPICredentials()
+	: ApexAPICredentials("", "", "")
+{}
+
 ApexAPICredentials::ApexAPICredentials(const std::string& apiKey, const std::string& apiSecret, const std::string& apiPassphrase)
 	: mAPIKey(apiKey)
 	, mAPISecret(apiSecret)
 	, mAPIPassphrase(apiPassphrase)
 {}
 
-ApexAPICredentials::operator bool()
+ApexAPICredentials::operator bool() const
 {
 	return mAPIKey.empty() == false &&
 		mAPISecret.empty() == false &&

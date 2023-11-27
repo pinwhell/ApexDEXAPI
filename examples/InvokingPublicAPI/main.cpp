@@ -3,7 +3,8 @@
 
 int main()
 {
-	ApexPublicAPI api;
+	BS::thread_pool_light threadPool(std::thread::hardware_concurrency());
+	ApexPublicAPI api(threadPool);
 	ApexPriceHistory& btcUsdcHistory = api.getPriceHistory(CurrencyPair("BTC", "USDC"));
 	ApexTicker& btcUsdcTicker = api.getTicker(CurrencyPair("BTC", "USDC"));
 	Scheduler scheduler(std::chrono::milliseconds(500));
@@ -19,7 +20,12 @@ int main()
 		if (!scheduler)
 			continue;
 
-		api.Refresh();
+		api.FetchData();
+
+		threadPool.wait_for_tasks();
+
+		api.ProcessData();
+		api.UpdateCheckTick();
 
 		scheduler.PostExecuted();
 	}

@@ -1,14 +1,17 @@
 #include <ApexPublicAPI.h>
 #include <Util.h>
 
-ApexPublicAPI::ApexPublicAPI(const std::string& baseUrl, const std::string& version)
+ApexPublicAPI::ApexPublicAPI(
+	BS::thread_pool_light& threadPool,
+	const std::string& baseUrl,
+	const std::string& version
+)
 	: mRequestBuilder(baseUrl, version)
-	, mThreadPool(std::thread::hardware_concurrency())
+	, mThreadPool(threadPool)
 	, mSymbols(mRequestBuilder, mThreadPool)
-	, mRefreshCounts(0)
 {
-	Push(mDataProviders, mSymbols);
-	Push(mDataProcessors, mSymbols);
+	mDataProviders.push_back(&mSymbols);
+	mDataProcessors.push_back(&mSymbols);
 }
 
 ApexPriceHistory& ApexPublicAPI::getPriceHistory(const CurrencyPair & currencyPair, size_t candlesInterval)
@@ -55,25 +58,22 @@ unsigned long long ApexPublicAPI::getServerTime(bool estimate)
 	return 0;
 }
 
-void ApexPublicAPI::Refresh(bool wait)
+void ApexPublicAPI::FetchData()
 {
 	for (IDataProvider* provider : mDataProviders)
 		provider->FetchData();
+}
 
-	if (wait || mRefreshCounts == 0)
-		mThreadPool.wait_for_tasks();
-
+void ApexPublicAPI::ProcessData()
+{
 	for (IDataProcessor* processor : mDataProcessors)
 		processor->ProcessData();
+}
 
-	// Leaving the check tick to the end, this way
-	// user see all other components updated
-	// when tick is reported to their callbacks
-
+void ApexPublicAPI::UpdateCheckTick()
+{
 	for (const auto& history : mAllPriceHistories)
 		history.second->UpdateCheckTick();
-
-	mRefreshCounts++;
 }
 
 ApexSymbols& ApexPublicAPI::getSymbols()

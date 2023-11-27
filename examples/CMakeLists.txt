@@ -1,2 +1,4 @@
-add_executable(InvokingPublicAPI InvokingPublicAPI/main.cpp)
+add_executable(InvokingPublicAPI InvokingPublicAPI/main.cpp )
+add_executable(InvokingPrivateAPI InvokingPrivateAPI/main.cpp)
 target_link_libraries(InvokingPublicAPI ApexDEXAPI)
+target_link_libraries(InvokingPrivateAPI ApexDEXAPI)

@@ -1,6 +1,5 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <ApexRequest.h>
+#include <ApexAPI.h>
 
 int main()
 {
@@ -12,19 +11,9 @@ int main()
 		return 1;
 	}
 
-	ApexPrivateAPIRequestBuilder requestBuilder(apiCreds);
+	ApexAPI apexApi(apiCreds);
 
-	httplib::Result res = requestBuilder
-		.setMethod("GET")
-		.setEndpoint("/account-balance")
-		.Build()
-		.Perform();
+	apexApi.Refresh(true);
 
-	if (!res)
-	{
-		printf("Request Failed\n");
-		return 1;
-	}
-
-	std::cout << res->body << std::endl;
+	std::cout << "Full Account Equity: " << apexApi.getPrivateAPI().getAccountBalance().getTotalEquity() << std::endl;
 }
