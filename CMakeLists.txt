@@ -10,3 +10,6 @@ add_subdirectory(vendor)
 add_subdirectory(src)
 add_subdirectory(examples)
 add_subdirectory(tests)
+
+install(DIRECTORY include
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
